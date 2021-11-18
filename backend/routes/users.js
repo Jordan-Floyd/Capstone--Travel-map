@@ -24,6 +24,7 @@ router.post("/register", async (req,res) => {
         res.status(200).json(user._id)
     } catch (err) {
         res.status(500).json(err)
+        return;
     }
 });
 
@@ -35,6 +36,7 @@ router.post("/login", async (req,res)=>{
         // find user
         const user = await User.findOne({ username:req.body.username });
         !user && res.status(400).json("Wrong username or password!");
+        
 
         // validate pw
         const validPassword = await bcrypt.compare(
@@ -48,6 +50,7 @@ router.post("/login", async (req,res)=>{
 
     } catch (err) {
         res.status(500).json(err)
+        return;
     }
 });
 
