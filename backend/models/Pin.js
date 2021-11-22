@@ -27,7 +27,8 @@ const PinSchema = new mongoose.Schema(
             require:true,
         },
         long:{
-
+            type:Number,
+            require: true
         }
     },
     { timestamps: true }
