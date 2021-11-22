@@ -5,23 +5,23 @@ import axios from "axios";
 
 
 
-export default function Register({setShowRegister}) {
+export default function Register ({ setShowRegister }) {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
-    const nameRef = useRef()
-    const emailRef = useRef()
-    const passwordRef = useRef()
+    const usernameRef = useRef();
+    const emailRef = useRef();
+    const passwordRef = useRef();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const newUser = {
-            username: nameRef.current.value,
+            username: usernameRef.current.value,
             email: emailRef.current.value,
             password: passwordRef.current.value,
         };
 
         try{
-            await axios.post("/users/register", newUser)
+            await axios.post("/users/register", newUser);
             setSuccess(true);
             setError(false);
 
@@ -33,14 +33,14 @@ export default function Register({setShowRegister}) {
     return (
         <div className = "registerContainer">
             <div className= "logo">
-                <Room/>
-                TravelPin
+                <Room className="logoIcon"/>
+                <span>TravelPin</span>
             </div>
             <form onSubmit = {handleSubmit}>
-                <input type="text" placeholder = "username" ref = {nameRef} />
+                <input autoFocus placeholder = "username" ref = {usernameRef} />
                 <input type="email" placeholder = "email" ref = {emailRef} />
                 <input type="password" placeholder = "password" ref = {passwordRef} />
-                <button className = "registerBtn">Register</button>
+                <button className = "registerBtn" type= "submit">Register</button>
                 {success && (
                     <span className = "success">Successful! You can login now!</span>
                 )}
@@ -48,7 +48,7 @@ export default function Register({setShowRegister}) {
             </form>
             <Cancel className = "registerCancel" onClick = {() =>setShowRegister(false)}/>
         </div>
-    )
+    );
 }
 
 

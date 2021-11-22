@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import ReactMapGL, {Marker, Popup} from 'react-map-gl';
-import {Room, Star} from "@material-ui/icons";
+import ReactMapGL, { Marker, Popup } from 'react-map-gl';
+import { Room, Star } from "@material-ui/icons";
 import "./app.css";
 import axios from "axios";
-import {format} from "timeago.js"
+import { format } from "timeago.js"
 import Register from './components/Register';
 import Login from './components/Login';
 
@@ -13,9 +13,9 @@ import Login from './components/Login';
 
 
 function App() {
-  const myStorage = window.localStorage
-  const [currentUser, setCurrentUser] = useState(null);
-  const [pins,setPins] = useState([]);
+  const myStorage = window.localStorage;
+  const [currentUsername, setCurrentUsername] = useState(myStorage.getItem("user"));
+  const [pins, setPins] = useState([]);
   const [currentPlaceId, setCurrentPlaceId] = useState(null);
   const [newPlace, setNewPlace] = useState(null);
   const [title, setTitle] = useState(null);
@@ -38,7 +38,11 @@ function App() {
     const getPins = async () => {
       try{
         const res = await axios.get("/pins");
-        setPins(res.data);
+        console.log(res.data);
+        if(res.data != null)
+        {
+          setPins(res.data);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -50,15 +54,15 @@ function App() {
 
   const handleMarkerClick = (id, lat, long) => {
     setCurrentPlaceId(id);
-    setViewport({ ...viewport, latitude:lat, longitude:long })
+    setViewport({ ...viewport, latitude:lat, longitude:long });
   };
 
   const handleAddClick = (e) => {
-    const [long, lat] = e.lngLat;
+    const [longitude, latitude] = e.lngLat;
     setNewPlace({
-      lat:lat,
-      long:long
-    })
+      lat:latitude,
+      long:longitude,
+    });
   };
 
 
@@ -66,13 +70,13 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newPin = {
-      username:currentUser,
+      username:currentUsername,
       title,
       desc,
       rating,
       lat:newPlace.lat,
       long:newPlace.long,
-    }
+    };
   
 
     try{
@@ -85,6 +89,11 @@ function App() {
       console.log(err)
     }
   };
+
+  const handleLogout = () =>{
+    myStorage.removeItem("user");
+    setCurrentUsername(null);
+  };
   
   
 
@@ -95,7 +104,7 @@ function App() {
         mapboxApiAccessToken = {process.env.REACT_APP_MAPBOX}
         onViewportChange = {nextViewport => setViewport(nextViewport)}
         mapStyle = "mapbox://styles/jordanfloyd09/ckw3xi4ra1a2n14ocrt7envkq"
-        onDblClick = {handleAddClick}
+        onDblClick = { currentUsername && handleAddClick }
         transitionDruation = "200"
       >
         {pins.map((p) => (
@@ -108,13 +117,13 @@ function App() {
           offsetTop = {-viewport.zoom * 7}
           >
           <Room
-            style = {{ fontSize:viewport.zoom * 7, color: p.username===currentUser ?"tomato" : "blue",
+            style = {{ fontSize:viewport.zoom * 7, color: p.username===currentUsername ? "tomato" : "blue",
              cursor:"pointer"
              }}
             onClick = {()=>handleMarkerClick(p._id, p.lat, p.long)}
           />
         </Marker>
-        {p._id === currentPlaceId &&
+        {p._id === currentPlaceId &&(
           <Popup
             latitude={p.lat}
             longitude={p.long}
@@ -138,23 +147,38 @@ function App() {
               <span className = "date">{format(p.createdAt)}</span>
             </div>
           </Popup>
-          } 
+        )} 
           </>
         ))}
         {newPlace && (
-        <Popup
-            latitude={newPlace.lat}
-            longitude={newPlace.long}
-            closeButton={true}
-            closeOnClick={false}
-            anchor="left"
-            onClose = {()=>setNewPlace(null)}
+          <>
+            <Marker
+              latitude={newPlace.lat}
+              longitude={newPlace.long}
+              offsetLeft={-3.5 * viewport.zoom}
+              offsetTop={-7 * viewport.zoom}
+            >
+              <Room
+                style={{
+                  fontSize: 7 * viewport.zoom,
+                  color: "tomato",
+                  cursor: "pointer",
+                }}
+              />
+            </Marker>
+            <Popup
+              latitude={newPlace.lat}
+              longitude={newPlace.long}
+              closeButton={true}
+              closeOnClick={false}
+              anchor="left"
+              onClose = {()=>setNewPlace(null)}
             >
               <div>
                 <form onSubmit = {handleSubmit}>
                   <label>Title</label>
                   <input placeholder = "Enter a title"
-                     onChange= {(e) => setTitle(e.target.value)}
+                    onChange= {(e) => setTitle(e.target.value)}
                      />
                   <label>Review</label>
                   <textarea placeholder = "Say something about this place"
@@ -172,11 +196,12 @@ function App() {
                 </form>
               </div>
             </Popup>
+          </>
         )}
-        {currentUser ? (
-        <button className = "button logout">Log Out</button>
+        {currentUsername ? (
+        <button className = "button logout" onClick = {handleLogout}>Log Out</button>
         ) : (
-          <div className = "button">
+          <div className = "buttons">
           <button className = "button login" onClick = {() => setShowLogin(true)}>
             Log In</button>
           <button className = "button register" onClick = {() => setShowRegister(true)}>
@@ -184,7 +209,8 @@ function App() {
         </div>
         )}
         {showRegister && <Register setShowRegister = {setShowRegister} />}
-        {showLogin && <Login setShowLogin = {setShowLogin} myStorage = {myStorage} setCurrentUser = {setCurrentUser}/>}
+        {showLogin && (
+          <Login setShowLogin = {setShowLogin} myStorage = {myStorage} setCurrentUsername = {setCurrentUsername}/>)}
       </ReactMapGL>
     </div>
   );
