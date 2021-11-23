@@ -30,7 +30,7 @@ export default function Login({setShowLogin, myStorage, setCurrentUsername}) {
 
     return (
         <div className = "loginContainer">
-            <div className= "logo">
+            <div className= "logoLogin">
                 <Room className="logoIcon" />
                 <span>TravelPin</span>
             </div>
