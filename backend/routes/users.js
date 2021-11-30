@@ -13,7 +13,7 @@ router.post("/register", async (req,res) => {
         if(userlookup)
         { 
             res.status(200).json("User already registered!");
-            console.log("Here0");
+            console.log();
             return;
         }
 
@@ -47,7 +47,7 @@ router.post("/login", async (req,res)=>{
         if(!user)
         { 
             res.status(400).json("Wrong username or password!");
-            console.log("Here1");
+            console.log();
             return;
         }
         // validate pw
@@ -55,18 +55,18 @@ router.post("/login", async (req,res)=>{
             req.body.password, 
             user.password
         );
-        console.log("Here2");
+        console.log();
         if(!validPassword) 
         {
             res.status(400).json("Wrong username or password!");
             return;
         }
-        console.log("Here3");
+        console.log();
         // send res
         res.status(200).json({ _id:user._id, username:user.username });
 
     } catch (err) {
-        console.log("Here4");
+        console.log();
         res.status(500).json(err);
     }
 });
