@@ -32,8 +32,6 @@ function App() {
   });
 
 
-
-
   useEffect(() => {
     const getPins = async () => {
       try{
