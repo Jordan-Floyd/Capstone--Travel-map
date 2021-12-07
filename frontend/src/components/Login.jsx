@@ -32,7 +32,7 @@ export default function Login({setShowLogin, myStorage, setCurrentUsername}) {
         <div className = "loginContainer">
             <div className= "logoLogin">
                 <Room className="logoIcon" />
-                <span>TravelPin</span>
+                <span>Places You've been</span>
             </div>
             <form onSubmit = {handleSubmit}>
                 <input autoFocus placeholder = "username" ref = {usernameRef} />

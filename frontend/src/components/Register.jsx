@@ -34,7 +34,7 @@ export default function Register ({ setShowRegister }) {
         <div className = "registerContainer">
             <div className= "logo">
                 <Room className="logoIcon"/>
-                <span>TravelPin</span>
+                <span>Places You've been</span>
             </div>
             <form onSubmit = {handleSubmit}>
                 <input autoFocus placeholder = "username" ref = {usernameRef} />
